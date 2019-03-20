@@ -1,5 +1,7 @@
 const expect = require("expect");
 
+const {ObjectID} = require("mongodb");
+
 const request = require("supertest");
 
 const {app} = require("./../server");
@@ -7,9 +9,11 @@ const {app} = require("./../server");
 const{Todo} = require("./../models/todo");
 
 const todos = [{
+  _id: new ObjectID(),
   text:"first test todo"
 },
   {
+  _id: new ObjectID(),
   text:"second test todo"
 }];
 beforeEach((done)=>{
@@ -58,6 +62,7 @@ describe("POST /todos", ()=>{
       });
     });
   });
+});
   describe("GET /todos",()=>{
     it("should get all todos",(done)=>{
       request(app)
@@ -67,6 +72,31 @@ describe("POST /todos", ()=>{
         expect(res.body.todos.length).toBe(2);
       })
       .end(done);
-    })
-  })
-})
+    });
+  });
+
+describe("GET /todos/:id",(req,res)=>{
+  it("should return todo doc",(done)=>{
+    request(app)
+      .get(`/todos/${todos[0]._id.toHexString()}`)
+      .expect(200)
+        .expect((res)=>{
+          expect(res.body.todo.text).toBe(todos[0].text);
+        })
+        .end(done);
+  });
+     it("should return 404 if todo not found",(done)=>{
+       var hexId = new ObjectID().toHexString();
+
+       request(app)
+       .get(`/todo/${hexId}`)
+       .expect(404)
+       .end(done);
+     });
+     it("should return a 404 status code error for non-object ids",(done)=>{
+       request(app)
+       .get("/todos/123abc")
+       expect(404)
+       .end(done);
+     });
+});
