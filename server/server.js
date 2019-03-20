@@ -47,8 +47,8 @@ app.get("/todos/:id",(req,res)=>{
   })
   // res.send(req.params);
 })
-app.listen(3000,()=>{
-  console.log("The app is up and running!")
+app.listen(port,()=>{
+  console.log(`The app is up and running!${port}`)
 });
 
 module.exports = {app}
