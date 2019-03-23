@@ -99,12 +99,12 @@ describe("GET /todos/:id",(req,res)=>{
      it("should return a 404 status code error for non-object ids",(done)=>{
        request(app)
        .get("/todos/123abc")
-       expect(404)
+       .expect(404)
        .end(done);
      });
 });
 
-describe("DELETE /todos/:id",()=>{
+describe("DELETE /todos/:id",(req,res)=>{
   it("should remove a todo",(done)=>{
     var hexId = todos[1]._id.toHexString();
     request(app)
@@ -134,7 +134,7 @@ describe("DELETE /todos/:id",()=>{
   it("should return 404 if object ID is not valid",(done)=>{
     request(app)
     .delete("/todos/123abc")
-    expect(404)
+    .expect(404)
     .end(done);
   });
 });
