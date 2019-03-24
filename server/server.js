@@ -9,6 +9,7 @@ const {User} = require("./models/user");
 const {ObjectID} = require("mongodb");
 const jwt = require("jsonwebtoken");
 const {SHA256} = require("crypto-js");
+const {authenticate} = require("./middleware/authenticate");
 
 var app = express();
 
@@ -104,6 +105,13 @@ app.post("/users",(req,res)=>{
     res.status(400).send(e);
   })
 });
+
+
+
+
+app.get("/users/me",authenticate,(req,res)=>{
+  res.send(req.user);
+})
 app.listen(port,()=>{
   console.log(`The app is up and running!${port}`)
 });
