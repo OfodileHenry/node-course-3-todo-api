@@ -38,18 +38,17 @@ describe("POST /todos", ()=>{
     })
     .end((err,res)=>{
       if (err){
-        return done(err)
+        return done(err);
       }
 
       Todo.find({text}).then((todos)=>{
         expect(todos.length).toBe(1);
         expect(todos[0].text).toBe(text);
         done();
-      }).catch((e)=>{
-        done(e)
+      }).catch((e)=>done(e));
       });
     });
-    it("should not create todo with invalid data",(done)=>{
+    it("should not create todo with invalid body data",(done)=>{
       request(app)
       .post("/todos")
       .send({})
@@ -64,9 +63,8 @@ describe("POST /todos", ()=>{
         }).catch((e)=>done(e));
       });
     });
-  });
 });
-  describe("GET /todos",(req,res)=>{
+  describe("GET /todos",()=>{
     it("should get all todos",(done)=>{
       request(app)
       .get("/todos")

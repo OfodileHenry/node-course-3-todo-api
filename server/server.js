@@ -1,6 +1,4 @@
-const {config} = require("./config/config")
-
-
+const {config} = require("./config/config");
 const _ = require("lodash");
 const validator = require("validator");
 const express = require("express");
@@ -9,6 +7,8 @@ const {mongoose} = require("./db/mongoose");
 const {Todo} = require("./models/todo");
 const {User} = require("./models/user");
 const {ObjectID} = require("mongodb");
+const jwt = require("jsonwebtoken");
+const {SHA256} = require("crypto-js");
 
 var app = express();
 
@@ -89,7 +89,21 @@ app.patch("/todos/:id",(req,res)=>{
   }).catch((e)=>{
     res.status(400).send()
   })
-})
+});
+
+//Post Users AUTH
+
+app.post("/users",(req,res)=>{
+  var body = _.pick(req.body,['email','password']);
+  var user = new User(body);
+  user.save().then(()=>{
+    return user.generateAuthToken();
+  }).then((token)=>{
+    res.header("x-auth",token).send(user);
+  }).catch((e)=>{
+    res.status(400).send(e);
+  })
+});
 app.listen(port,()=>{
   console.log(`The app is up and running!${port}`)
 });
