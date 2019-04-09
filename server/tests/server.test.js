@@ -8,22 +8,12 @@ const {app} = require("./../server");
 
 const{Todo} = require("./../models/todo");
 
-const todos = [{
-  _id: new ObjectID(),
-  text:"first test todo"
-},
-  {
-  _id: new ObjectID(),
-  text:"second test todo",
-  completed:true,
-  completedAt:333
+const {todos,populateTodos,users,populateUsers} = require("./seed/seed");
 
-}];
-beforeEach((done)=>{
-  Todo.remove({}).then(()=>{
-    return Todo.insertMany(todos);
-  }).then(()=>done());
-});
+// const{User} = require("./../models/user");
+
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 describe("POST /todos", ()=>{
   it("should create a new todo",(done)=>{
     var text = "Test todo text";
@@ -171,5 +161,40 @@ describe("PATCH /todos/:id",()=>{
     })
     .end(done);
 
+  })
+})
+
+describe("GET /users/me", ()=>{
+  it("should return user if authenticated",(done)=>{
+     request(app)
+        .get("/users/me")
+        .set("x-auth",users[0].tokens[0].token)
+        .expect(200)
+        .expect((res)=>{
+          expect(res.body._id).toBe(users[0]._id.toHexString());
+          expect(res.body.email).toBe(users[0].email);
+        })
+        .end(done);
+  });
+  it("should return 401 if not authenticated",(done)=>{
+    request(app)
+        .get("/users/me")
+        .expect(401)
+        .expect((res)=>{
+           expect(res.body).toEqual({});
+        })
+        .end(done);
+  });
+});
+
+describe("POST /users",()=>{
+  it("should create a user",(done)=>{
+
+  })
+  it("should return a validation error if request is invalid",(done)=>{
+
+  });
+  it("should not create user if email is in use",(done)=>{
+    
   })
 })
